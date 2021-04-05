@@ -1,0 +1,102 @@
+<script>
+    $(document).ready(function() {
+
+        $('#Submit').click(function(e) {
+
+
+            // Insertion using ajax
+            e.preventDefault();
+            let id = $('#studid').val();
+            let name = $('#id_name').val();
+            let email = $('#id_email').val();
+            let password = $('#id_password').val();
+            let csrf_token = $('input[name="csrfmiddlewaretoken"]').val();
+            //console.log(name, email, password, csrf_token);
+            mydata = {
+                sid: id,
+                name: name,
+                email: email,
+                password: password,
+                csrfmiddlewaretoken: csrf_token
+            };
+
+            $.ajax({
+                url: "{% url 'save_data' %}",
+                method: "POST",
+                data: mydata,
+                success: function(data) {
+
+                    x = data.stud_data
+                    output = '';
+                    if (data.status == 'save') {
+                        for (i = 0; i < x.length; i++) {
+                            output += '<tr><td>' + x[i].id + '</td><td>' + x[i].name + '</td><td>' + x[i].email +
+                                '</td><td>' + x[i].password +
+                                '</td><td><input type="submit" value="edit" class="edit" data-sid=' +
+                                x[i].id + '></td><td><input type="submit" value="Delete" class="delete" data-sid=' +
+                                x[i].id + '></td></tr > ';
+                        }
+                        $('#tbody').html(output);
+                        $('#studid').val('');
+                        $('#msg').text('form submitted successfully');
+                        $('#msg').show();
+                        $('form')[0].reset();
+
+
+                    }
+                }
+            });
+
+        });
+
+
+        // deletion using ajax
+        $("tbody").on("click", ".delete", function() {
+            //console.log('delete clicked');
+            let id = $(this).attr("data-sid");
+            let csrf = $("input[name='csrfmiddlewaretoken']").val();
+
+            deldata = {
+                id: id,
+                csrfmiddlewaretoken: csrf
+            };
+            mythis = this;
+            $.ajax({
+                url: "{% url 'delete' %}",
+                method: "post",
+                data: deldata,
+                success: function(data) {
+                    //console.log(data);
+                    $(mythis).closest("tr").fadeOut();
+                    $('#msg').text('deleted successfully');
+                    $('#msg').show();
+                }
+            });
+        });
+
+
+        $("tbody").on("click", ".edit", function() {
+            //console.log('edit clicked');
+            let id = $(this).attr("data-sid");
+            let csrf = $("input[name='csrfmiddlewaretoken']").val();
+            editdata = {
+                id: id,
+                csrfmiddlewaretoken: csrf
+            };
+            $.ajax({
+                url: "{% url 'edit' %}",
+                method: "post",
+                data: editdata,
+                success: function(data) {
+                    $('#id_name').val(data.name);
+                    $('#id_email').val(data.email);
+                    $('#id_password').val(data.password);
+                    $('#studid').val(data.id);
+                    // $(mythis).closest("tr").fadeOut();
+                }
+            });
+
+        });
+
+    });
+</script>

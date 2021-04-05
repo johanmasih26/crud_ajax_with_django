@@ -1,0 +1,52 @@
+{% extends '../main.html' %} {% block content %}
+<h3 class="bg-danger text-center">Ajax with jquery </h3>
+<div class="row">
+    <div class="col-5">
+        <form action="" class="w-75 m-2">
+            {% csrf_token %} {{form}}
+            <input type="hidden" name="studid" id="studid">
+            <input type="submit" value="Submit" class="mt-2 btn btn-danger" id="Submit">
+        </form>
+        <div class="alert alert-danger" id="msg" style="display: none;"></div>
+    </div>
+    <div class="col-7">
+        1
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID:</th>
+                    <th>NAME</th>
+                    <th>EMAIL</th>
+                    <th>PASSWORD</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                {% for i in data %}
+                <tr>
+                    <td>{{i.id}}</td>
+                    <td>{{i.name}}</td>
+                    <td>{{i.email}}</td>
+                    <td>{{i.password}}</td>
+                    <td>
+                        <input type="submit" value="edit" class="edit" data-sid="{{i.id}}">
+                    </td>
+                    <td>
+                        <input type="submit" value="Delete" class="delete" data-sid="{{i.id}}">
+                    </td>
+                </tr> {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% include "ajax_files/insert_ajax.html" %}
+
+<!-- <scrip>
+    $(document).ready(function() {
+        $('#Submit').click(function() {
+            alert('hello mike');
+        });
+    }); -->
+{% endblock content %}
